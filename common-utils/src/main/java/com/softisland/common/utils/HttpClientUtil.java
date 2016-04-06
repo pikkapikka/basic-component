@@ -147,6 +147,14 @@ public class HttpClientUtil {
     public static SoftHttpResponse postParamsToUrl(String url,Map<String,String> paraMap,SoftCookie[] cookies,SoftHeader[] headers)throws IOException{
         CloseableHttpClient httpclient = getHttpClient(cookies);
         HttpPost httpPost = new HttpPost(url);
+
+        org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
+                .setSocketTimeout(defaultSocketTimeout)
+                .setConnectTimeout(defaultConnectTimeout)
+                .setProxy(getProxy())
+                .build();
+        httpPost.setConfig(requestConfig);
+
         if(null != headers){
             for(SoftHeader header : headers){
                 httpPost.setHeader(header.getName(),header.getValue());
@@ -377,10 +385,15 @@ public class HttpClientUtil {
      * @throws IOException
      */
     public static SoftHttpResponse getSteamStock(String steamId)throws IOException{
-        CloseableHttpClient httpclient = getHttpClient(null);
+        SoftCookie cookie = new SoftCookie();
+        cookie.setDomain("steamcommunity.com");
+        cookie.setName("Steam_Language");
+        cookie.setValue("schinese");
+        cookie.setPath("/");
+        CloseableHttpClient httpclient = getHttpClient(new SoftCookie[]{cookie});
         String url = "http://steamcommunity.com/profiles/"+steamId+"/inventory/json/730/2/";
         HttpGet httpGet = new HttpGet(new String(url.getBytes(), "UTF-8"));
-
+        //CN|782be65066aff833853feb3d472d9f55
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
                 .setConnectTimeout(defaultConnectTimeout)

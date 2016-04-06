@@ -14,6 +14,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpClientTest {
     public static void main(String[] args)throws Exception {
+        testStock();
+    }
+
+    private static void mulThread()throws Exception{
         List<String> list = new ArrayList<>();
         for(int i=0;i<50;i++){
             Runnable runnable = ()-> {
@@ -41,5 +45,11 @@ public class HttpClientTest {
         }
 
         System.out.println("+++++++++++"+list.size());
+    }
+
+    private static void testStock()throws Exception{
+        //76561198276810732
+        SoftHttpResponse response = HttpClientUtil.getSteamStock("76561198276810732");
+        System.out.println(response.getContent());
     }
 }

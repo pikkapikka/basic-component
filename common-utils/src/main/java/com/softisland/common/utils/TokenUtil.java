@@ -22,10 +22,10 @@ public final class TokenUtil {
     }
 
     public static void main1(String[] args)throws Exception {
-        String encode = jweEncryption("WHOAREYOU");
+        String encode = jweEncryption("nihaoma");
         System.out.println(encode);
-        boolean is = validateToken(encode);
-        System.out.println(is);
+        String de = jweDecryption(encode);
+        System.out.println(de);
     }
 
 
@@ -39,7 +39,8 @@ public final class TokenUtil {
     public static String jweEncryption(String payload)throws Exception{
 
         JsonWebEncryption jwe = new JsonWebEncryption();
-        jwe.setPlaintext(payload+System.currentTimeMillis());
+        //jwe.setPlaintext(payload+System.currentTimeMillis());
+        jwe.setPlaintext(payload);
         jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
         jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         jwe.setKey(jwk.getKey());
