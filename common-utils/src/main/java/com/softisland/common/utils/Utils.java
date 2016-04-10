@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -29,6 +30,19 @@ public final class Utils {
      */
     public static String get20Id(){
         return DateTimeUtil.dateToStrSimpleYMDHMSS()+Double.toString(Math.random()).substring(2, 5);
+    }
+
+    /**
+     * 线程休眠
+     * @param timeUnit
+     * @param unit
+     */
+    public static void threadSleep(TimeUnit timeUnit, int unit){
+        try {
+            timeUnit.sleep(unit);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
     }
 
     /**
