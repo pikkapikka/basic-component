@@ -397,7 +397,7 @@ public class HttpClientUtil {
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
                 .setConnectTimeout(defaultConnectTimeout)
-                .setProxy(getProxy())
+                //.setProxy(getProxy())
                 .build();
 
         httpGet.setConfig(requestConfig);
