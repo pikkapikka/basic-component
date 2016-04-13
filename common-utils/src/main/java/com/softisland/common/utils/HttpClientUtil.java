@@ -67,6 +67,7 @@ public class HttpClientUtil {
         CloseableHttpClient httpclient = getHttpClient(softCookies);
         //CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader("User-Agent","Mozilla/5.0 Firefox/26.0");
         CloseableHttpResponse response = httpclient.execute(httpGet);
 
         return getResponseContent(response);
@@ -88,6 +89,7 @@ public class HttpClientUtil {
 
         //CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader("User-Agent","Mozilla/5.0 Firefox/26.0");
         CloseableHttpResponse response = httpclient.execute(httpGet);
         return getResponseHeaderAndContent(response);
 
@@ -147,7 +149,7 @@ public class HttpClientUtil {
     public static SoftHttpResponse postParamsToUrl(String url,Map<String,String> paraMap,SoftCookie[] cookies,SoftHeader[] headers)throws IOException{
         CloseableHttpClient httpclient = getHttpClient(cookies);
         HttpPost httpPost = new HttpPost(url);
-
+        httpPost.setHeader("User-Agent","Mozilla/5.0 Firefox/26.0");
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
                 .setConnectTimeout(defaultConnectTimeout)
@@ -187,6 +189,7 @@ public class HttpClientUtil {
         CloseableHttpClient httpclient = getHttpClient(cookies);
 
         HttpPost httpPost = new HttpPost(url);
+        httpPost.setHeader("User-Agent","Mozilla/5.0 Firefox/26.0");
         List<NameValuePair> nvps = new ArrayList<>(paraMap.size());
         paraMap.keySet().forEach(v->nvps.add(new BasicNameValuePair(v, paraMap.get(v))));
         try {
@@ -246,6 +249,7 @@ public class HttpClientUtil {
         CloseableHttpClient httpclient = getHttpClient(softCookies);
 
         HttpPost httpPost = new HttpPost(url);
+        httpPost.setHeader("User-Agent","Mozilla/5.0 Firefox/26.0");
         if(null != headers){
             for(SoftHeader header : headers){
                 httpPost.setHeader(header.getName(),header.getValue());
@@ -393,6 +397,7 @@ public class HttpClientUtil {
         CloseableHttpClient httpclient = getHttpClient(new SoftCookie[]{cookie});
         String url = "http://steamcommunity.com/profiles/"+steamId+"/inventory/json/730/2/";
         HttpGet httpGet = new HttpGet(new String(url.getBytes(), "UTF-8"));
+        httpGet.setHeader("User-Agent","Mozilla/5.0 Firefox/26.0");
         //CN|782be65066aff833853feb3d472d9f55
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
@@ -438,7 +443,7 @@ public class HttpClientUtil {
         CloseableHttpClient httpclient = getHttpClient(softCookies);
 
         HttpGet httpGet = new HttpGet(new String(url.getBytes(), "UTF-8"));
-
+        httpGet.setHeader("User-Agent","Mozilla/5.0 Firefox/26.0");
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
                 .setConnectTimeout(defaultConnectTimeout)
