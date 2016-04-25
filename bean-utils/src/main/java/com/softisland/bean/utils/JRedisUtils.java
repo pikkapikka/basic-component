@@ -130,6 +130,48 @@ public class JRedisUtils {
     }
 
     /**
+     * 添加值到LIST中
+     * @param key
+     * @param value
+     * @throws Exception
+     */
+    public void addValueToList(String key,String value)throws Exception{
+        stringRedisTemplate.boundListOps(key).leftPush(value);
+    }
+
+    /**
+     * 根据KEY从list中获取所有值
+     * @param key
+     * @return
+     * @throws Exception
+     */
+    public List<String> getValuesFromList(String key)throws Exception{
+        return stringRedisTemplate.boundListOps(key).range(0,-1);
+    }
+
+    /**
+     * 通过key从LIST中获取指定范围的值
+     * @param key
+     * @param start
+     * @param end
+     * @return
+     * @throws Exception
+     */
+    public List<String> getValuesFromList(String key,int start,int end)throws Exception{
+        return stringRedisTemplate.boundListOps(key).range(start,end);
+    }
+
+    /**
+     * 获取LIST的大小
+     * @param key
+     * @return
+     * @throws Exception
+     */
+    public Long getListSize(String key)throws Exception{
+        return stringRedisTemplate.boundListOps(key).size();
+    }
+
+    /**
      * 从redis中获取值
      * @param key
      * @return
@@ -187,6 +229,16 @@ public class JRedisUtils {
     }
 
     /**
+     * 获取hash的大小
+     * @param key
+     * @return
+     * @throws Exception
+     */
+    public Long getHashSize(String key)throws Exception{
+        return stringRedisTemplate.opsForHash().size(key);
+    }
+
+    /**
      * 对现有的KEY进行重命名
      * @param oldKey
      * @param newKey
@@ -210,7 +262,7 @@ public class JRedisUtils {
 
 
 
-    public static void main1(String[] args)throws Exception {
+    public static void main(String[] args)throws Exception {
         /*JedisShardInfo info = new JedisShardInfo("114.215.178.40",6379);
         info.setPassword("1qaz2WSX!@");*/
 

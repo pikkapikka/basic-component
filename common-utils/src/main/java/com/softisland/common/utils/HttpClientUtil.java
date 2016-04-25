@@ -51,11 +51,11 @@ public class HttpClientUtil {
     /**
 	 * 默认：请求获取数据的超时时间，单位毫秒。
 	 */
-	private static final int defaultSocketTimeout = 3000;
+	private static final int defaultSocketTimeout = 10000;
 	/**
 	 * 默认：设置连接超时时间，单位毫秒。
 	 */
-	private static final int defaultConnectTimeout = 2000;
+	private static final int defaultConnectTimeout = 3000;
 	
     /**
      * 通过GET方式获取指定URL的内容

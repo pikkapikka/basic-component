@@ -22,10 +22,15 @@ public final class TokenUtil {
     }
 
     public static void main1(String[] args)throws Exception {
-        String encode = jweEncryption("nihaoma");
+        long start = System.currentTimeMillis();
+        String code = "YLTOcgh3";
+        String encode = jweEncryption(code);
         System.out.println(encode);
         String de = jweDecryption(encode);
         System.out.println(de);
+        long end = System.currentTimeMillis();
+        System.out.println(end-start);
+        System.out.println(de.equals(code));
     }
 
 
@@ -54,7 +59,7 @@ public final class TokenUtil {
      * @return
      * @throws Exception
      */
-    private static String jweDecryption(String decodeStr){
+    public static String jweDecryption(String decodeStr){
 
         try{
             JsonWebEncryption receiverJwe = new JsonWebEncryption();

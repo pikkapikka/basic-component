@@ -1,10 +1,14 @@
 package com.softisland.common.utils;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -55,6 +59,16 @@ public final class Utils {
             count = 4;
         }
         return RandomStringUtils.randomAlphanumeric(count);
+    }
+
+    /**
+     * 写内容到指定文件
+     * @param file
+     * @param string
+     * @throws Exception
+     */
+    public static void writeStringToFile(File file, String string)throws IOException{
+        FileUtils.writeStringToFile(file,string);
     }
 
 }
