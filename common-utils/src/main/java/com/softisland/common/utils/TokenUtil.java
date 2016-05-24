@@ -21,12 +21,12 @@ public final class TokenUtil {
         }catch (Exception e){}
     }
 
-    public static void main1(String[] args)throws Exception {
+    public static void main(String[] args)throws Exception {
         long start = System.currentTimeMillis();
-        String code = "YLTOcgh3";
+        String code = "LltFl8VQ";
         String encode = jweEncryption(code);
         System.out.println(encode);
-        String de = jweDecryption(encode);
+        String de = jweDecryption("MUB1NQhn9lp_KMarElL8jw.Rr5AvUDT7ogMkdAdlp_pHA.f7HjvPxT7AeyHmbTX5XTwg");
         System.out.println(de);
         long end = System.currentTimeMillis();
         System.out.println(end-start);

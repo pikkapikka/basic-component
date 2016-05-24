@@ -39,6 +39,18 @@ public class BotInfo {
 
     private String type;
 
+    private String bot_name;
+
+    private String trade_url;
+
+    public String getTrade_url() {
+        return trade_url;
+    }
+
+    public void setTrade_url(String trade_url) {
+        this.trade_url = trade_url;
+    }
+
     public String getApi_key() {
         return api_key;
     }
@@ -165,5 +177,13 @@ public class BotInfo {
 
     public void setFully_enrolled(String fully_enrolled) {
         this.fully_enrolled = fully_enrolled;
+    }
+
+    public String getBot_name() {
+        return bot_name;
+    }
+
+    public void setBot_name(String bot_name) {
+        this.bot_name = bot_name;
     }
 }

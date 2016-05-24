@@ -1,9 +1,10 @@
-package com.softisland.common.utils;
+package com.softisland.bean.utils;
 
 import com.softisland.common.utils.bean.SoftCookie;
 import com.softisland.common.utils.bean.SoftHeader;
 import com.softisland.common.utils.bean.SoftHttpResponse;
 import org.apache.http.Header;
+import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -19,29 +20,21 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by liwx on 2015/10/28.
  */
-public class HttpClientUtil {
+@Component
+public class HttpProxyClientUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(HttpClientUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpProxyClientUtil.class);
 
-    public static final String SunX509 = "SunX509";
-    public static final String JKS = "JKS";
-    public static final String PKCS12 = "PKCS12";
-    public static final String TLS = "TLS";
     /**
 	 * 默认：请求获取数据的超时时间，单位毫秒。
 	 */
@@ -49,9 +42,15 @@ public class HttpClientUtil {
 	/**
 	 * 默认：设置连接超时时间，单位毫秒。
 	 */
-	private static final int defaultConnectTimeout = 5000;
+	private static final int defaultConnectTimeout = 3000;
 
     private static final String SOFT_USER_AGENT = "Softisland SOA-Agent/1.0";
+
+    @Value("${proxy.host}")
+    private String proxyHost;
+
+    @Value("${proxy.port}")
+    private int proxyPort;
 	
     /**
      * 通过GET方式获取指定URL的内容
@@ -59,16 +58,22 @@ public class HttpClientUtil {
      * @return
      * @throws Exception
      */
-    public static SoftHttpResponse getUrlContent(String url, SoftCookie[] softCookies)throws Exception{
+    public SoftHttpResponse getUrlContent(String url, SoftCookie[] softCookies)throws Exception{
         CloseableHttpClient httpclient = getHttpClient(softCookies);
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader("User-Agent", SOFT_USER_AGENT);
+        org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
+                .setSocketTimeout(defaultSocketTimeout)
+                .setConnectTimeout(defaultConnectTimeout)
+                .setProxy(getProxy())
+                .build();
+        httpGet.setConfig(requestConfig);
         CloseableHttpResponse response = httpclient.execute(httpGet);
 
         return getResponseContent(response);
     }
 
-    public static SoftHttpResponse getUrlContent(String url)throws Exception{
+    public SoftHttpResponse getUrlContent(String url)throws Exception{
 
         return getUrlContent(url,null);
     }
@@ -79,7 +84,7 @@ public class HttpClientUtil {
      * @return
      * @throws Exception
      */
-    public static SoftHttpResponse getHeadersAndContent(String url,SoftCookie[] softCookies)throws Exception{
+    public SoftHttpResponse getHeadersAndContent(String url,SoftCookie[] softCookies)throws Exception{
         CloseableHttpClient httpclient = getHttpClient(softCookies);
 
         HttpGet httpGet = new HttpGet(url);
@@ -87,6 +92,7 @@ public class HttpClientUtil {
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
                 .setConnectTimeout(defaultConnectTimeout)
+                .setProxy(getProxy())
                 .build();
         httpGet.setConfig(requestConfig);
         CloseableHttpResponse response = httpclient.execute(httpGet);
@@ -100,7 +106,7 @@ public class HttpClientUtil {
      * @return
      * @throws IOException
      */
-    private static SoftHttpResponse getResponseHeaderAndContent(CloseableHttpResponse response) throws IOException {
+    private SoftHttpResponse getResponseHeaderAndContent(CloseableHttpResponse response) throws IOException {
         SoftHttpResponse res = getResponseContent(response);
         Header[] headers = response.getAllHeaders();
         if(null != headers){
@@ -123,7 +129,7 @@ public class HttpClientUtil {
      * @return
      * @throws Exception
      */
-    public static SoftHttpResponse getResponseContent(CloseableHttpResponse response)throws IOException{
+    public SoftHttpResponse getResponseContent(CloseableHttpResponse response)throws IOException{
         try {
             SoftHttpResponse res = new SoftHttpResponse(response.getStatusLine().getStatusCode(),EntityUtils.toString(response.getEntity(),"utf-8"));
             return res;
@@ -141,17 +147,18 @@ public class HttpClientUtil {
      * @return
      * @throws Exception
      */
-    public static SoftHttpResponse postParamsToUrl(String url,Map<String,String> paraMap,SoftCookie[] cookies)throws Exception{
+    public SoftHttpResponse postParamsToUrl(String url,Map<String,String> paraMap,SoftCookie[] cookies)throws Exception{
         return postParamsToUrl(url,paraMap,cookies,null);
     }
 
-    public static SoftHttpResponse postParamsToUrl(String url,Map<String,String> paraMap,SoftCookie[] cookies,SoftHeader[] headers)throws IOException{
+    public SoftHttpResponse postParamsToUrl(String url,Map<String,String> paraMap,SoftCookie[] cookies,SoftHeader[] headers)throws IOException{
         CloseableHttpClient httpclient = getHttpClient(cookies);
         HttpPost httpPost = new HttpPost(url);
         httpPost.setHeader("User-Agent", SOFT_USER_AGENT);
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
                 .setConnectTimeout(defaultConnectTimeout)
+                .setProxy(getProxy())
                 .build();
         httpPost.setConfig(requestConfig);
 
@@ -183,7 +190,7 @@ public class HttpClientUtil {
      * @return
      * @throws Exception
      */
-    public static SoftHttpResponse postParamsToUrl1(String url,Map<String,String> paraMap,SoftCookie[] cookies)throws Exception{
+    public SoftHttpResponse postParamsToUrl1(String url,Map<String,String> paraMap,SoftCookie[] cookies)throws Exception{
         CloseableHttpClient httpclient = getHttpClient(cookies);
 
         HttpPost httpPost = new HttpPost(url);
@@ -199,6 +206,7 @@ public class HttpClientUtil {
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
                 .setConnectTimeout(defaultConnectTimeout)
+                .setProxy(getProxy())
                 .build();
         httpPost.setConfig(requestConfig);
 
@@ -212,7 +220,7 @@ public class HttpClientUtil {
      * @param cookies
      * @return
      */
-    private static CloseableHttpClient getHttpClient(SoftCookie[] cookies){
+    private CloseableHttpClient getHttpClient(SoftCookie[] cookies){
         CloseableHttpClient httpclient;
         if(null == cookies || cookies.length == 0){
             httpclient = HttpClients.createDefault();
@@ -238,16 +246,16 @@ public class HttpClientUtil {
      * @return
      * @throws Exception
      */
-    public static SoftHttpResponse postJsonDataToUrl(String url,String json)throws Exception{
+    public SoftHttpResponse postJsonDataToUrl(String url,String json)throws Exception{
         return postJsonDataToUrl(url,json,null);
     }
 
-    public static SoftHttpResponse postJsonDataToUrl(String url,String json,SoftCookie[] softCookies)throws Exception{
+    public SoftHttpResponse postJsonDataToUrl(String url,String json,SoftCookie[] softCookies)throws Exception{
 
         return postJsonDataToUrl(url,json,softCookies,null);
     }
 
-    public static SoftHttpResponse postJsonDataToUrl(String url, String json, SoftCookie[] softCookies, SoftHeader[] headers)throws Exception{
+    public SoftHttpResponse postJsonDataToUrl(String url, String json, SoftCookie[] softCookies, SoftHeader[] headers)throws Exception{
 
         CloseableHttpClient httpclient = getHttpClient(softCookies);
 
@@ -266,6 +274,7 @@ public class HttpClientUtil {
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
                 .setConnectTimeout(defaultConnectTimeout)
+                .setProxy(getProxy())
                 .build();
         httpPost.setConfig(requestConfig);
         CloseableHttpResponse response = httpclient.execute(httpPost);
@@ -273,140 +282,20 @@ public class HttpClientUtil {
         return getResponseContent(response);
     }
 
-
-    /**
-     * get HttpURLConnection
-     * @param strUrl url��ַ
-     * @return HttpURLConnection
-     * @throws IOException
-     */
-    public static HttpURLConnection getHttpURLConnection(String strUrl)
-            throws IOException {
-        URL url = new URL(strUrl);
-        HttpURLConnection httpURLConnection = (HttpURLConnection) url
-                .openConnection();
-        return httpURLConnection;
-    }
-
-    /**
-     * get HttpsURLConnection
-     * @param strUrl url��ַ
-     * @return HttpsURLConnection
-     * @throws IOException
-     */
-    public static HttpsURLConnection getHttpsURLConnection(String strUrl)
-            throws IOException {
-        URL url = new URL(strUrl);
-        HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url
-                .openConnection();
-        return httpsURLConnection;
-    }
-
-    public static String getURL(String strUrl) {
-
-        if(null != strUrl) {
-            int indexOf = strUrl.indexOf("?");
-            if(-1 != indexOf) {
-                return strUrl.substring(0, indexOf);
-            }
-            return strUrl;
-        }
-        return strUrl;
-
-    }
-
-    public static String getQueryString(String strUrl) {
-
-        if(null != strUrl) {
-            int indexOf = strUrl.indexOf("?");
-            if(-1 != indexOf) {
-                return strUrl.substring(indexOf+1, strUrl.length());
-            }
-            return "";
-        }
-        return strUrl;
-    }
-
-    public static Map queryString2Map(String queryString) {
-        if(null == queryString || "".equals(queryString)) {
-            return null;
-        }
-        Map m = new HashMap();
-        String[] strArray = queryString.split("&");
-        for(int index = 0; index < strArray.length; index++) {
-            String pair = strArray[index];
-            HttpClientUtil.putMapByPair(pair, m);
-        }
-        return m;
-
-    }
-
-    public static void putMapByPair(String pair, Map m) {
-
-        if(null == pair || "".equals(pair)) {
-            return;
-        }
-        int indexOf = pair.indexOf("=");
-        if(-1 != indexOf) {
-            String k = pair.substring(0, indexOf);
-            String v = pair.substring(indexOf+1, pair.length());
-            if(null != k && !"".equals(k)) {
-                m.put(k, v);
-            }
-        } else {
-            m.put(pair, "");
-        }
-    }
-
-    /**
-     * @param reader
-     * @return String
-     * @throws IOException
-     */
-    public static String bufferedReader2String(BufferedReader reader) throws IOException {
-        StringBuffer buf = new StringBuffer();
-        String line = null;
-        while( (line = reader.readLine()) != null) {
-            buf.append(line);
-            buf.append("\r\n");
-        }
-
-        return buf.toString();
-    }
-
     /**
      * 用get方法调用一个url
      * 返回json字符串
      */
-    public static SoftHttpResponse getJson(String url)throws IOException{
+    public SoftHttpResponse getJson(String url)throws IOException{
         return getJson(url,null);
     }
 
-    /**
-     * 通过代理获取steam库存
-     * @param steamId
-     * @return
-     * @throws IOException
-     */
-    public static SoftHttpResponse getSteamStock(String steamId)throws IOException{
-        SoftCookie cookie = new SoftCookie();
-        cookie.setDomain("steamcommunity.com");
-        cookie.setName("Steam_Language");
-        cookie.setValue("schinese");
-        cookie.setPath("/");
-        CloseableHttpClient httpclient = getHttpClient(new SoftCookie[]{cookie});
-        String url = "http://steamcommunity.com/profiles/"+steamId+"/inventory/json/730/2/";
-        HttpGet httpGet = new HttpGet(new String(url.getBytes(), "UTF-8"));
-        httpGet.setHeader("User-Agent", SOFT_USER_AGENT);
-        //CN|782be65066aff833853feb3d472d9f55
-        org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
-                .setSocketTimeout(defaultSocketTimeout)
-                .setConnectTimeout(defaultConnectTimeout)
-                .build();
 
-        httpGet.setConfig(requestConfig);
-
-        return getResponseContent(httpclient.execute(httpGet));
+    private HttpHost getProxy(){
+        int i = new Random().nextInt(10);
+        //HttpHost proxy = new HttpHost(hosts[i].split(":")[0],Integer.parseInt(hosts[i].split(":")[1]));
+        HttpHost proxy = new HttpHost(proxyHost,proxyPort);
+        return proxy;
     }
 
     /**
@@ -416,7 +305,7 @@ public class HttpClientUtil {
      * @return
      * @throws IOException
      */
-    public static SoftHttpResponse getJson(String url,SoftCookie[] softCookies)throws IOException{
+    public SoftHttpResponse getJson(String url,SoftCookie[] softCookies)throws IOException{
         CloseableHttpClient httpclient = getHttpClient(softCookies);
 
         HttpGet httpGet = new HttpGet(new String(url.getBytes(), "UTF-8"));
@@ -424,6 +313,7 @@ public class HttpClientUtil {
         org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
                 .setConnectTimeout(defaultConnectTimeout)
+                .setProxy(getProxy())
                 .build();
 
         httpGet.setConfig(requestConfig);
