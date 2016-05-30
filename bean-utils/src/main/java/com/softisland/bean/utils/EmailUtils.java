@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Component;
 
 /**
  * 邮件发送工具类
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
  * 
  *
  */
-@Component(value = "emailUtils")
 public class EmailUtils
 {
 	private static final Logger log = LoggerFactory.getLogger(EmailUtils.class);
