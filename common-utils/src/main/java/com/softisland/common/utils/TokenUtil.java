@@ -23,10 +23,10 @@ public final class TokenUtil {
 
     public static void main(String[] args)throws Exception {
         long start = System.currentTimeMillis();
-        String code = "LltFl8VQ";
+        String code = "rHLsi1p1mv";
         String encode = jweEncryption(code);
         System.out.println(encode);
-        String de = jweDecryption("MUB1NQhn9lp_KMarElL8jw.Rr5AvUDT7ogMkdAdlp_pHA.f7HjvPxT7AeyHmbTX5XTwg");
+        String de = jweDecryption("nfM4BG4QOzsxyRJgf454wA.ErhYmJ-bNza77r3wBVrMCg._usirltJlMoRPG3IqH_YmA");
         System.out.println(de);
         long end = System.currentTimeMillis();
         System.out.println(end-start);

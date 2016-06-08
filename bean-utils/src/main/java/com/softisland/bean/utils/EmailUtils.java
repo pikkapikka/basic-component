@@ -3,8 +3,7 @@
  */
 package com.softisland.bean.utils;
 
-import java.util.Properties;
-
+import com.softisland.common.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 邮件发送工具类
@@ -118,6 +120,22 @@ public class EmailUtils
 			log.error("send email failed, sender is {}, reciver is {}.", senderMail, reciverMail);
 			log.error("send email catch faield.", e);
 			throw new Exception("send email exception.", e);
+		}
+	}
+
+	public void sendErrorEmail(String title, String content) {
+		int times = 0;
+		while (times++ < 50){
+			try
+			{
+				sendEmail(title, content);
+				return;
+			}
+			catch (Exception e)
+			{
+				log.error("send email exce",e);
+				Utils.threadSleep(TimeUnit.MILLISECONDS,800);
+			}
 		}
 	}
 }
