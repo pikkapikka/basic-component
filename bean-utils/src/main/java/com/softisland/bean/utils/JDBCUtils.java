@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
-import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.Types;
@@ -22,7 +21,7 @@ import java.util.*;
 /**
  * Created by 卫星 on 2014/11/12.
  */
-@Component(value="jdbcUtils")
+//@Component(value="jdbcUtils")
 public final class JDBCUtils {
 
     /**
