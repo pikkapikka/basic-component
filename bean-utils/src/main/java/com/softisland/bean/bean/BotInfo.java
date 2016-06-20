@@ -43,6 +43,10 @@ public class BotInfo {
 
     private String trade_url;
 
+    private String host;
+
+    private String app_id;
+
     public String getTrade_url() {
         return trade_url;
     }
@@ -165,6 +169,22 @@ public class BotInfo {
 
     public String getDevice_id() {
         return device_id;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getApp_id() {
+        return app_id;
+    }
+
+    public void setApp_id(String app_id) {
+        this.app_id = app_id;
     }
 
     public void setDevice_id(String device_id) {

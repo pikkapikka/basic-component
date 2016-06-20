@@ -7,6 +7,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -62,11 +63,15 @@ public class HttpProxyClientUtil {
         CloseableHttpClient httpclient = getHttpClient(softCookies);
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader("User-Agent", SOFT_USER_AGENT);
-        org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
+
+        RequestConfig.Builder builder = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
-                .setConnectTimeout(defaultConnectTimeout)
-                .setProxy(getProxy())
-                .build();
+                .setConnectTimeout(defaultConnectTimeout);
+        if(null != getProxy()){
+            builder.setProxy(getProxy());
+        }
+        org.apache.http.client.config.RequestConfig requestConfig = builder.build();
+
         httpGet.setConfig(requestConfig);
         CloseableHttpResponse response = httpclient.execute(httpGet);
 
@@ -89,11 +94,15 @@ public class HttpProxyClientUtil {
 
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader("User-Agent", SOFT_USER_AGENT);
-        org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
+
+        RequestConfig.Builder builder = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
-                .setConnectTimeout(defaultConnectTimeout)
-                .setProxy(getProxy())
-                .build();
+                .setConnectTimeout(defaultConnectTimeout);
+        if(null != getProxy()){
+            builder.setProxy(getProxy());
+        }
+        org.apache.http.client.config.RequestConfig requestConfig = builder.build();
+
         httpGet.setConfig(requestConfig);
         CloseableHttpResponse response = httpclient.execute(httpGet);
         return getResponseHeaderAndContent(response);
@@ -155,11 +164,16 @@ public class HttpProxyClientUtil {
         CloseableHttpClient httpclient = getHttpClient(cookies);
         HttpPost httpPost = new HttpPost(url);
         httpPost.setHeader("User-Agent", SOFT_USER_AGENT);
-        org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
+
+        RequestConfig.Builder builder = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
-                .setConnectTimeout(defaultConnectTimeout)
-                .setProxy(getProxy())
-                .build();
+                .setConnectTimeout(defaultConnectTimeout);
+        if(null != getProxy()){
+            builder.setProxy(getProxy());
+        }
+        org.apache.http.client.config.RequestConfig requestConfig = builder.build();
+
+
         httpPost.setConfig(requestConfig);
 
         if(null != headers){
@@ -203,11 +217,15 @@ public class HttpProxyClientUtil {
             log.error("<不支持的转码>",e);
             e.printStackTrace();
         }
-        org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
+
+        RequestConfig.Builder builder = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
-                .setConnectTimeout(defaultConnectTimeout)
-                .setProxy(getProxy())
-                .build();
+                .setConnectTimeout(defaultConnectTimeout);
+        if(null != getProxy()){
+            builder.setProxy(getProxy());
+        }
+        org.apache.http.client.config.RequestConfig requestConfig = builder.build();
+
         httpPost.setConfig(requestConfig);
 
         CloseableHttpResponse response = httpclient.execute(httpPost);
@@ -271,11 +289,15 @@ public class HttpProxyClientUtil {
         entity.setContentEncoding("UTF-8");
         entity.setContentType("application/json; charset=utf-8");
         httpPost.setEntity(entity);
-        org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
+
+        RequestConfig.Builder builder = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
-                .setConnectTimeout(defaultConnectTimeout)
-                .setProxy(getProxy())
-                .build();
+                .setConnectTimeout(defaultConnectTimeout);
+        if(null != getProxy()){
+            builder.setProxy(getProxy());
+        }
+        org.apache.http.client.config.RequestConfig requestConfig = builder.build();
+
         httpPost.setConfig(requestConfig);
         CloseableHttpResponse response = httpclient.execute(httpPost);
 
@@ -294,6 +316,9 @@ public class HttpProxyClientUtil {
     private HttpHost getProxy(){
         int i = new Random().nextInt(10);
         //HttpHost proxy = new HttpHost(hosts[i].split(":")[0],Integer.parseInt(hosts[i].split(":")[1]));
+        if("127.0.0.1".equals(proxyHost)){
+            return null;
+        }
         HttpHost proxy = new HttpHost(proxyHost,proxyPort);
         return proxy;
     }
@@ -310,11 +335,14 @@ public class HttpProxyClientUtil {
 
         HttpGet httpGet = new HttpGet(new String(url.getBytes(), "UTF-8"));
         httpGet.setHeader("User-Agent",SOFT_USER_AGENT);
-        org.apache.http.client.config.RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
+
+        RequestConfig.Builder builder = org.apache.http.client.config.RequestConfig.custom()
                 .setSocketTimeout(defaultSocketTimeout)
-                .setConnectTimeout(defaultConnectTimeout)
-                .setProxy(getProxy())
-                .build();
+                .setConnectTimeout(defaultConnectTimeout);
+        if(null != getProxy()){
+            builder.setProxy(getProxy());
+        }
+        org.apache.http.client.config.RequestConfig requestConfig = builder.build();
 
         httpGet.setConfig(requestConfig);
 

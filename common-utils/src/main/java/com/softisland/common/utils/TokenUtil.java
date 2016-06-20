@@ -26,7 +26,7 @@ public final class TokenUtil {
         String code = "rHLsi1p1mv";
         String encode = jweEncryption(code);
         System.out.println(encode);
-        String de = jweDecryption("nfM4BG4QOzsxyRJgf454wA.ErhYmJ-bNza77r3wBVrMCg._usirltJlMoRPG3IqH_YmA");
+        String de = jweDecryption("16M_rpXYptBSw_a913bcKg.gVgamF2914gqgZBS7boCJA.vub5JLFldpMI26kGTURLUg");
         System.out.println(de);
         long end = System.currentTimeMillis();
         System.out.println(end-start);
