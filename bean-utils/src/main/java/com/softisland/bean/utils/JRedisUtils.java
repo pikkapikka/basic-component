@@ -1,5 +1,8 @@
 package com.softisland.bean.utils;
 
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -7,11 +10,9 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisShardInfo;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by liwx on 15/11/9.
@@ -147,6 +148,37 @@ public class JRedisUtils {
      */
     public List<String> getValuesFromList(String key)throws Exception{
         return stringRedisTemplate.boundListOps(key).range(0,-1);
+    }
+    
+    /**
+     * 把值添加到队列的尾部
+     * @param key KEY
+     * @param value 值
+     * @return
+     * @throws Exception
+     */
+    public void appendValueToList(String key, String value) throws Exception{
+        stringRedisTemplate.boundListOps(key).rightPush(value);
+    }
+    
+    /**
+     * 移除队列头部的值
+     * @param key KEY
+     * @return
+     * @throws Exception
+     */
+    public String lpopValueFromList(String key) throws Exception{
+        return stringRedisTemplate.boundListOps(key).leftPop();
+    }
+    
+    /**
+     * 移除队列头部的值
+     * @param key KEY
+     * @return
+     * @throws Exception
+     */
+    public String getValueFromList(String key, long index) throws Exception{
+        return stringRedisTemplate.boundListOps(key).index(index);
     }
 
     /**
