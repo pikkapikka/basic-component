@@ -1,9 +1,19 @@
 package com.softisland.common.utils;
 
-import com.softisland.common.utils.bean.SoftCookie;
-import com.softisland.common.utils.bean.SoftHeader;
-import com.softisland.common.utils.bean.SoftHttpResponse;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+
 import org.apache.http.Header;
+import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -20,16 +30,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.softisland.common.utils.bean.SoftCookie;
+import com.softisland.common.utils.bean.SoftHeader;
+import com.softisland.common.utils.bean.SoftHttpResponse;
 
 /**
  * Created by liwx on 2015/10/28.
@@ -50,6 +53,8 @@ public class HttpClientUtil {
 	 * 默认：设置连接超时时间，单位毫秒。
 	 */
 	private static final int defaultConnectTimeout = 5000;
+	
+	private static final int LEN_HOST_PORT = 2;
 
     private static final String SOFT_USER_AGENT = "Softisland SOA-Agent/1.0";
 	
@@ -430,5 +435,46 @@ public class HttpClientUtil {
 
         CloseableHttpResponse response = httpclient.execute(httpGet);
         return getResponseContent(response);
+    }
+    
+    /**
+     * 使用GET方法获取指定URL的内容
+     * @param url
+     * @param softCookies
+     * @param proxyHost 代理主机
+     * @return
+     * @throws IOException
+     */
+    public static SoftHttpResponse getJson(String url,SoftCookie[] softCookies, String proxyHost)throws IOException{
+        CloseableHttpClient httpclient = getHttpClient(softCookies);
+
+        HttpGet httpGet = new HttpGet(new String(url.getBytes(), "UTF-8"));
+        httpGet.setHeader("User-Agent",SOFT_USER_AGENT);
+        
+        org.apache.http.client.config.RequestConfig.Builder builder = org.apache.http.client.config.RequestConfig
+                .custom().setSocketTimeout(defaultSocketTimeout).setConnectTimeout(defaultConnectTimeout);
+        HttpHost host = getProxy(proxyHost);
+        if (null != host)
+        {
+            builder.setProxy(host);
+        }
+
+        org.apache.http.client.config.RequestConfig requestConfig = builder.build();
+        httpGet.setConfig(requestConfig);
+
+        CloseableHttpResponse response = httpclient.execute(httpGet);
+        return getResponseContent(response);
+    }
+    
+    private static HttpHost getProxy(String proxyHost)
+    {
+        String[] hostPort = proxyHost.split(":");
+        if (hostPort.length < LEN_HOST_PORT)
+        {
+            return null;
+        }
+        
+        HttpHost proxy = new HttpHost(hostPort[0], Integer.parseInt(hostPort[1]));
+        return proxy;
     }
 }
