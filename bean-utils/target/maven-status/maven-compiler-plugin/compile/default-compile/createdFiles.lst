@@ -1,0 +1,10 @@
+com\softisland\bean\utils\JDBCUtils.class
+com\softisland\bean\bean\RedisClusterProperties$Pool.class
+com\softisland\bean\bean\RedisClusterProperties.class
+com\softisland\bean\bean\ClusterConfigurationProperties.class
+com\softisland\bean\utils\JRedisClusterUtils.class
+com\softisland\bean\utils\EmailUtils.class
+com\softisland\bean\utils\JRedisUtils.class
+com\softisland\bean\bean\BotInfo.class
+com\softisland\bean\bean\PageInfo.class
+com\softisland\bean\utils\HttpProxyClientUtil.class
